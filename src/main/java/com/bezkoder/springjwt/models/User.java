@@ -1,5 +1,12 @@
 package com.bezkoder.springjwt.models;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,11 +16,16 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(	name = "users", 
-		uniqueConstraints = { 
-			@UniqueConstraint(columnNames = "username"),
-			@UniqueConstraint(columnNames = "email") 
+@Table(	name = "users",
+		uniqueConstraints = {
+				@UniqueConstraint(columnNames = "username"),
+				@UniqueConstraint(columnNames = "email")
 		})
+@Getter
+@Setter
+@AllArgsConstructor
+//@NoArgsConstructor
+
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +35,8 @@ public class User {
 	@Size(max = 20)
 	private String username;
 
+	private String matricule;
+
 	@NotBlank
 	@Size(max = 50)
 	@Email
@@ -31,12 +45,22 @@ public class User {
 	@NotBlank
 	@Size(max = 120)
 	private String password;
+    private boolean enabled = true;
+    private boolean locked = false;
+    private boolean updatedPassword ;
+    private LocalDateTime subscriptionDate;
+    private String subMonth;
+    private int nbaccessUser ;
+    private int nbabsenceUser;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(	name = "user_roles", 
 				joinColumns = @JoinColumn(name = "user_id"), 
 				inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles = new HashSet<>();
+
+	@OneToOne(mappedBy="account")
+	private Employee employee;
 
 	public User() {
 	}
@@ -46,7 +70,6 @@ public class User {
 		this.email = email;
 		this.password = password;
 	}
-
 	public Long getId() {
 		return id;
 	}
