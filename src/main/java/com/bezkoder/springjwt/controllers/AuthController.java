@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -89,10 +90,16 @@ public class AuthController {
 		// Create new user's account
 		User user = new User(signUpRequest.getUsername(), 
 							 signUpRequest.getEmail(),
+			            	/*signUpRequest.getMatricule(),*/
 							 encoder.encode(signUpRequest.getPassword()));
 
-		Set<String> strRoles = signUpRequest.getRole();
+		/*Set<String> strRoles = signUpRequest.getRole();*/
+
+		Set<String> strRoles= new HashSet<>();
+		strRoles.add(signUpRequest.getRole().iterator().next());
+		/*String strRoles = signUpRequest.getRole();*/
 		Set<Role> roles = new HashSet<>();
+
 
 		if (strRoles == null) {
 			Role userRole = roleRepository.findByName(ERole.ROLE_USER)
@@ -101,6 +108,7 @@ public class AuthController {
 		} else {
 			strRoles.forEach(role -> {
 				switch (role) {
+
 				case "admin":
 					Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
 							.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
@@ -122,6 +130,7 @@ public class AuthController {
 		}
 
 		user.setRoles(roles);
+		/*user.setMatricule(matricule);*/
 		userRepository.save(user);
 
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));

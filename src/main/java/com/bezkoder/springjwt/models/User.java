@@ -16,16 +16,10 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(	name = "users",
-		uniqueConstraints = {
-				@UniqueConstraint(columnNames = "username"),
-				@UniqueConstraint(columnNames = "email")
-		})
 @Getter
 @Setter
 @AllArgsConstructor
-//@NoArgsConstructor
-
+@NoArgsConstructor
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,14 +56,21 @@ public class User {
 	@OneToOne(mappedBy="account")
 	private Employee employee;
 
-	public User() {
+	public User(@NotBlank @Size(max = 20) String username/*, String matricule*/, @NotBlank @Size(max = 50) @Email String email, @NotBlank @Size(max = 120) String password) {
+		this.username = username;
+	/*	this.matricule = matricule;*/
+		this.email = email;
+		this.password = password;
+	}
+
+	/*public User() {
 	}
 
 	public User(String username, String email, String password) {
 		this.username = username;
 		this.email = email;
 		this.password = password;
-	}
+	}*/
 	public Long getId() {
 		return id;
 	}
